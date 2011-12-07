@@ -87,21 +87,21 @@
   This paper focuses on using the data for assisting teleoperation of 
   robot vehicles by providing a 3D representation of the environment.
   
-  Outdoor and Indoor environments can be difficult to capture in full three 
-  dimensional space.  One of the issues with mapping three dimensional 
-  space is that the computing resources (like processing time, memory usage, 
-  and network bandwidth) can be prohibitive to storing, transmitting, and 
-  processing the map.  Octrees have a long history of being used in 3D 
-  applications\cite{CITEME}, ranging from occupancy grids\cite{CITEME}, 
-  surface reconstruction\cite{CITEME}, and computer graphics\cite{CITEME}.  
-  Recent work has shown that arbitrary 3D maps can be stored efficiently using 
-  octrees for use in robotics applications\cite{octomap}.  The research by A. 
-  Hornung, et. al. resulted in an open source library called octomap 
-  \cite{octomap}.  The primary use of the octomap library so far has been in 
-  occupancy based motion planning for robots and robotic manipulators 
-  \cite{3DCOLLISION}. This paper applies this octree based spatial database 
-  methods described in the octomap paper to 3D teleoperation of robotic 
-  vehicles.
+  Outdoor and Indoor environments can be difficult to capture in full three
+  dimensional space. One of the issues with mapping three dimensional space is
+  that the computing resources (like processing time, memory usage, and
+  network bandwidth) can be prohibitive to storing, transmitting, and
+  processing the map. Octrees have a long history of being used in 3D
+  applications\cite{boada2001multiresolution}, surface
+  reconstruction\cite{kazhdan2006poisson}, and computer
+  graphics\cite{fang1996deformable}. Recent work has shown that arbitrary 3D
+  maps can be stored efficiently using octrees for use in robotics
+  applications\cite{octomap}. The research by A. Hornung, et. al. resulted in
+  an open source library called octomap \cite{octomap}. The primary use of the
+  octomap library so far has been in occupancy based motion planning for
+  robots and robotic manipulators \cite{3DCOLLISION}. This paper applies this
+  octree based spatial database methods described in the octomap paper to 3D
+  teleoperation of robotic vehicles.
   
   \subsection{System Overview}
   The teleoperation of robotic vehicles implies a client-server architecture 
@@ -182,7 +182,13 @@
   concern is bandwidth not latency.
   
   \subsection{Three Dimensional Teleoperation}
-  Information about previous 3D work (CMU and maybe Florida)
+  Previous work in photo-realistic teleoperation systems which include three
+  dimensional aspects have been pursued notably at Carnegie Mellon
+  University.\cite{5457431} Their system incorporated many sensor
+  technologies, high quality positioning technology, and high power computers
+  to process all of the data. In their work they employed several techniques
+  to reconstruct the environment including billboards, voxels grids, point
+  clouds, and ground plane estimation and modeling.
   
   \section{Three Dimensional Mapping}
   \label{sec:3dmapping}
@@ -375,7 +381,7 @@
   
   \begin{algorithm}
   \caption{Algorithm for Determining Difference Depth}
-  \label{alg:treedepth}
+  \label{alg:bandwidth}
   \begin{algorithmic}
     \STATE \COMMENT {$O_0$ is the first octree}
     \STATE \COMMENT {$O_1$ is the second octree}
@@ -396,30 +402,144 @@
   \end{algorithmic}
   \end{algorithm}
   
-  The depth function simply returns a subtree of the given tree at the height given, and the height function gives the height of the tree specified.  The current available bandwidth function could be implemented in several ways, but the topic of available bandwidth estimation has been covered in the literature.\cite{prasad2003bandwidth}  The principal behind the bandwidth estimation is looking at metrics like round-trip-time, average delay, and throughput to determine the bandwidth currently available.
+  The depth function simply returns a subtree of the given tree at the height
+  given, and the height function gives the height of the tree specified. The
+  current available bandwidth function could be implemented in several ways,
+  but the topic of available bandwidth estimation has been covered in the
+  literature.\cite{prasad2003bandwidth} The principal behind the bandwidth
+  estimation is looking at metrics like round-trip-time, average delay, and
+  throughput to determine the bandwidth currently available.
   
   \subsubsection{Octree Set Union}
   The final stage of synchronizing the server and client octrees is to unite
   the differences with the client octree. This is just a simple union
   operation and can be performed by simply inserting every voxel in the
   differences into the client map using the normal octree insertion
-  method.\cite{meagher1982geometric}.
+  method.\cite{meagher1982geometric}
   
   \section{Results}
-  In this section the paper describes the results of the three dimensional mapping and the experimental setups that were used.  Data was collected from multiple real platforms as well as simulated data.
+  In this section the paper describes the results of the three dimensional
+  mapping and the experimental setups that were used. Data was collected from
+  multiple real platforms as well as simulated data.
+  
+  The three dimensional mapping activity can be seen in a series of images in
+  Figure \ref{fig:mapping}. In the figure the z-axis colored points are the
+  octree representation of the map and the white points are the current data
+  points from the Kinect. You can see as the robot turns and Kinect's field of
+  view moves across the scene, the three dimensional map continuously builds.
+  
+  \begin{figure}[here]
+    \centering
+    \includegraphics[width=3.5in,keepaspectratio]{segway.jpg}
+    \caption{Segway RMP200 based robotic platform}
+    \label{fig:segway}
+  \end{figure}
   
   \subsection{Experimental Setup}
   \label{sec:experimental_setup}
-  adsf
+  In order to test the system described in this paper, data was taken on
+  multiple robotic platforms. The first platform is based on the Segway RMP200
+  platform and had a Sick LRF for SLAM, odometry from the wheel encoders to
+  seed the SLAM algorithm, and a Microsoft Kinect mounted on top, see Figure
+  \ref{fig:segway}. This system took data in Shop Building 3 and in Broun Hall
+  and a sample of the data collected from this machine can be seen in Figure
+  \ref{fig:octovis}. Additionally, in Figure \ref{fig:octovis}, the iterative
+  degradation of resolution is visualized as the resolution decrease from
+  right to left in the series of images.
+  
+  Since taking data initially, the Segway RMP200 platform has been damaged, so a new platform has been setup based on an iRobot ATRV.  The ATRV has the same Sick LRF and Microsoft Kinect on board, but also has an ASUS Xtion Pro, which is a point cloud only version of the Kinect.  The ATRV also has encoders for its wheels, but is a four wheeled vehicle which changes some of the noise characteristics of the odometry.  A picture of the ATRV is in Figure \ref{fig:atrv}.
+  
+  \begin{figure}[here]
+    \centering
+    \includegraphics[width=3.5in,keepaspectratio]{atrv.jpeg}
+    \caption{iRobot ATRV based robotic platform}
+    \label{fig:atrv}
+  \end{figure}
   
   \subsection{Simulated Environment}
-  asdf
+  In addition to collecting data on real robotic platforms, simulated data was
+  used to test the algorithms without worrying about robot vehicle position
+  uncertainty or sensor noise. A simulation environment called MORSE, which is
+  based on the Blender game engine, is used to simulate a warehouse with
+  robotic vehicle traveling through it collecting three dimensional data.
+  
+  \begin{figure}[here]
+    \centering
+    \includegraphics[width=3.5in,keepaspectratio]{forklift.png}
+    \caption{The MORSE simulation environment}
+    \label{fig:forklift}
+  \end{figure}
+  
+  Figure \ref{fig:forklift} shows the simulation environment on the left and a
+  snapshot of three dimensional data from it on the right.
+  
+  \begin{figure}[here]
+    \centering
+    \includegraphics[width=3.5in,keepaspectratio]{simoctree.png}
+    \caption{Simulated teleoperation}
+    \label{fig:simoctree}
+  \end{figure}
+  
+  Additionally, Figure \ref{fig:simoctree} shows the teleoperation and three
+  dimensional mapping algorithms running on the simulated data.
+  
+  The simulated environment was a key component in the development of the
+  teleoperation algorithms because it side-stepped the problems associated
+  with real world data and illuminated systematic or logic errors in the
+  design.
+  
+  \begin{figure*}[here]
+    \centering
+    \includegraphics[width=7in,keepaspectratio]{mapping.pdf}
+    \caption{Three sequential snapshots of the three dimensional mapping 
+             process.}
+    \label{fig:mapping}
+  \end{figure*}
+  
+  \begin{figure*}[here]
+    \centering
+    \includegraphics[width=7in,keepaspectratio]{gavlab.pdf}
+    \caption{Maximum likelihood map result from data of the Gavlab}
+    \label{fig:octovis}
+  \end{figure*}
   
   \section{Future Work}
-  Future work.
+  There are several areas of this paper that require more attention, but
+  insufficient time prevented their expansion. The main focus of this paper
+  was describing the teleoperation system and how octrees were used to the
+  advantage of the design. In the future work several things should be
+  investigated and somethings should be expanded up on.
+  
+  \subsection{Three Dimensional Mapping}
+  The three dimensional mapping used in this paper can be improved up on in
+  several ways. An obvious improvement that doesn't directly relate to the
+  system is to improve the navigation solution of the robotic base. Another
+  area of possible improvement is to use better sensor error models when
+  inserting the data into the map to better handle sensor error.
+  
+  \subsection{Insertion Time}
+  One of the outstanding prohibitive characteristics of this system is that
+  insertion into the initial probabilistic octree is expensive. There might be
+  ways to improve this insertion time by making assumptions about the
+  environment for the teleoperation activity.
+  
+  \subsection{Use Linear Octrees to Improve Set Operations}
+  In the work by Jiang he used linear octrees for the storage mechanism rather
+  then pointer octrees, which allowed them to improve the set operations on
+  the octrees.\cite{jiang1996set} This might be an option to improve the
+  performance of the set operations in the teleoperation system.
   
   \section{Conclusion}
-  Conclusions
+  This paper has presented a three dimensional mapping system as it is applied
+  to teleoperation of robotic vehicles and how octrees have played an
+  important role in the design of the this system. Octrees have been used in
+  three dimensional applications for years, and have been applied to three
+  dimensional mapping in previous research. Octrees have proven to be useful
+  in the three dimensional mapping activity and the unique characteristics of
+  the data structure lends itself to being used in teleoperation activities.
+  This paper has shown how the three dimensional octree maps can be used in
+  teleoperation effectively and has described the design of a system to
+  utilize the benefits of octrees in the this area.
   
   \newpage
   
